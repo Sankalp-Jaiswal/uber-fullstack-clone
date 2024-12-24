@@ -24,4 +24,4 @@ router.get('/logout', authUser, logoutUser)
 
 
 
-export default router;
+export default router; 
