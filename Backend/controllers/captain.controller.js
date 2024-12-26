@@ -9,7 +9,7 @@ export const captainRegister = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    const {fullname,email,password,color,vehicle} = req.body;
+    const {fullname,email,password,vehicle} = req.body;
 
     const isCAPTAINalreadyExist = await Captain.findOne({ email: email });
     if (isCAPTAINalreadyExist) {
@@ -24,7 +24,6 @@ export const captainRegister = async (req, res, next) => {
       email,
       password: hashedPassword,
       color: vehicle.color,
-      model: vehicle.model,
       plate: vehicle.plate,
       capacity: vehicle.capacity,
       vehicleType: vehicle.vehicleType,
@@ -73,10 +72,9 @@ export const getCaptainProfile = async (req, res, next) => {
 
 export const logoutCaptain = async (req, res, next) => {
   try {
-    res.clearCookie("token");
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1] || req.token;
-    const blacklistedToken = new BlacklistToken({token});
-    await blacklistedToken.save();
+    res.clearCookie("token");
+    await BlacklistToken.create({ token });
     res.status(200).json({ message: "Logout successfully" });
   } catch (error) {
     res.status(400).json({ error: error.message });

@@ -1,20 +1,42 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { UserDataContext } from '../context/UserContext'
 
 const UserSignup = () => {
+
+  const navigate = useNavigate()
+
   const [email, setEmail] = useState('')
   const [firstname, setFirstname] = useState('')
   const [lastname, setLastname] = useState('')
   const [password, setPassword] = useState('')
-  const [userData,setuserData] = useState({})
 
-  const handleSubmit = (e) => {
+  const { user, setUser } = useContext(UserDataContext)
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setuserData({email,fullname:{firstname,lastname},password})
+    const userData = { email, fullname: { firstname, lastname }, password }
     setEmail('')
     setFirstname('')
     setLastname('')
     setPassword('')
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, userData)
+      
+      
+      if (response.status === 201) {
+        const data = response.data
+        setUser(data.user)
+        localStorage.setItem('token',data.token)
+        navigate('/home')
+        
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   return (
@@ -24,43 +46,43 @@ const UserSignup = () => {
           <div className='h-20 '>
             <img className='w-24' src="https://download.logo.wine/logo/Uber/Uber-Logo.wine.png" alt="" />
           </div>
-          
-          <form method="post" onSubmit={(e)=>handleSubmit(e)}>
 
-          <h3 className='text-lg font-medium mb-2'>What's your name </h3>
+          <form method="post" onSubmit={(e) => handleSubmit(e)}>
+
+            <h3 className='text-lg font-medium mb-2'>What's your name </h3>
             <div className='flex justify-between mb-1 gap-3'>
-              <input required 
-              type="text" 
-              value={firstname}
-              onChange={(e)=>setFirstname(e.target.value)} 
-              className='bg-[#eeeeee] mb-7 rounded px-2 py-2 border w-[95%] text-lg placeholder:text-lg' placeholder='Enter your Firstname' />
+              <input required
+                type="text"
+                value={firstname}
+                onChange={(e) => setFirstname(e.target.value)}
+                className='bg-[#eeeeee] mb-7 rounded px-2 py-2 border w-[95%] text-lg placeholder:text-lg' placeholder='Enter your Firstname' />
 
-              <input 
-              type="text" 
-              value={lastname}
-              onChange={(e)=>setLastname(e.target.value)} 
-              className='bg-[#eeeeee] mb-7 rounded px-2 py-2 border w-[100%] text-lg placeholder:text-lg' placeholder='Enter your Lastname' />
+              <input
+                type="text"
+                value={lastname}
+                onChange={(e) => setLastname(e.target.value)}
+                className='bg-[#eeeeee] mb-7 rounded px-2 py-2 border w-[100%] text-lg placeholder:text-lg' placeholder='Enter your Lastname' />
 
             </div>
 
             <h3 className='text-lg font-medium mb-2'>What's your email </h3>
 
-            <input required 
-            value={email}
-            onChange={(e)=>setEmail(e.target.value)}
-            className='bg-[#eeeeee] mb-7 rounded px-4 py-2 border w-full text-lg placeholder:text-lg' 
-            type="email"  
-            placeholder='example@gmail.com' />
+            <input required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className='bg-[#eeeeee] mb-7 rounded px-4 py-2 border w-full text-lg placeholder:text-lg'
+              type="email"
+              placeholder='example@gmail.com' />
 
 
             <h3 className='text-lg font-medium mb-2'>Enter Password</h3>
-            
-            <input required 
-            value={password}
-            onChange={(e)=>setPassword(e.target.value)} 
-            className='bg-[#eeeeee] mb-7 rounded px-4 py-2 border w-full text-lg placeholder:text-lg' 
-            type="password"  
-            placeholder='Password' />
+
+            <input required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className='bg-[#eeeeee] mb-7 rounded px-4 py-2 border w-full text-lg placeholder:text-lg'
+              type="password"
+              placeholder='Password' />
 
 
             <button className='bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2  w-full text-lg ' >Signup</button>

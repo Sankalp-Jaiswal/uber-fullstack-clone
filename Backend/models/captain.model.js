@@ -11,7 +11,6 @@ const captainSchema = new mongoose.Schema({
         },
         lastname: {
             type: String,
-            minlength: [3, 'Last name must be atleast 3 characters long']
         },
     },
     email: { 
@@ -53,7 +52,7 @@ const captainSchema = new mongoose.Schema({
         vehicleType:{
             type: String,
             required: true,
-            enum: ['car', 'bike','auto'],
+            enum: ['car','bike','auto','Car', 'Bike','Auto'],
         }
     },
     location: {
